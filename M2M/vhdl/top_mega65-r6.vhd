@@ -637,6 +637,7 @@ begin
       -- Connect to CORE
       qnice_clk_o             => qnice_clk,
       qnice_rst_o             => qnice_rst,
+      reset_m2m_n_o           => reset_m2m_n,
       main_clk_i              => main_clk,
       main_rst_i              => main_rst,
       main_qnice_reset_o      => main_qnice_reset,
@@ -760,6 +761,7 @@ begin
       )
       port map (
          clk_i                   => clk_i,
+         reset_m2m_n             => reset_m2m_n,
 
          -- Share clock and reset with the framework
          main_clk_o              => main_clk,            -- CORE's 54 MHz clock

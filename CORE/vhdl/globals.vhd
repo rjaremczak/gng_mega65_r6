@@ -40,8 +40,7 @@ constant QNICE_FIRMWARE           : string  := QNICE_FIRMWARE_M2M;
 -- then add all the clocks speeds here by adding more constants.
 ----------------------------------------------------------------------------------------------------------
 
--- @TODO: Your core's clock speed
-constant CORE_CLK_SPEED       : natural := 54_000_000;   -- @TODO YOURCORE expects 54 MHz
+constant CORE_CLK_SPEED       : natural := 12_000_000;   -- 12Mhz main clock
 
 -- System clock speed (crystal that is driving the FPGA) and QNICE clock speed
 -- !!! Do not touch !!!
@@ -54,12 +53,9 @@ constant QNICE_CLK_SPEED      : natural := 50_000_000;   -- a change here has de
 
 -- Rendering constants (in pixels)
 --    VGA_*   size of the core's target output post scandoubler
---    If in doubt, use twice the values found in this link:
---    https://mister-devel.github.io/MkDocs_MiSTer/advanced/nativeres/#arcade-core-default-native-resolutions
-constant VGA_DX               : natural := 720;
-constant VGA_DY               : natural := 576;
-
 --    FONT_*  size of one OSM character
+constant VGA_DX               : natural := 1024;
+constant VGA_DY               : natural := 448;
 constant FONT_FILE            : string  := "../font/Anikki-16x16-m2m.rom";
 constant FONT_DX              : natural := 16;
 constant FONT_DY              : natural := 16;
@@ -81,11 +77,6 @@ constant C_HMAP_DEMO          : std_logic_vector(15 downto 0) := x"0200";     --
 -- Virtual Drive Management System
 ----------------------------------------------------------------------------------------------------------
 
--- example virtual drive handler, which is connected to nothing and only here to demo
--- the file- and directory browsing capabilities of the firmware
-constant C_DEV_DEMO_VD        : std_logic_vector(15 downto 0) := x"0101";
-constant C_DEV_DEMO_NOBUFFER  : std_logic_vector(15 downto 0) := x"AAAA";
-
 -- Virtual drive management system (handled by vdrives.vhd and the firmware)
 -- If you are not using virtual drives, make sure that:
 --    C_VDNUM        is 0
@@ -94,16 +85,14 @@ constant C_DEV_DEMO_NOBUFFER  : std_logic_vector(15 downto 0) := x"AAAA";
 -- Otherwise make sure that you wire C_VD_DEVICE in the qnice_ramrom_devices process and that you
 -- have as many appropriately sized RAM buffers for disk images as you have drives
 type vd_buf_array is array(natural range <>) of std_logic_vector;
-constant C_VDNUM              : natural := 3;                                          -- amount of virtual drives; maximum is 15
-constant C_VD_DEVICE          : std_logic_vector(15 downto 0) := C_DEV_DEMO_VD;        -- device number of vdrives.vhd device
-constant C_VD_BUFFER          : vd_buf_array := (  C_DEV_DEMO_NOBUFFER,
-                                                   C_DEV_DEMO_NOBUFFER,
-                                                   C_DEV_DEMO_NOBUFFER,
-                                                   x"EEEE");                           -- Always finish the array using x"EEEE"
+constant C_VDNUM              : natural := 0;
+constant C_VD_DEVICE          : std_logic_vector(15 downto 0) := x"EEEE";
+constant C_VD_BUFFER          : vd_buf_array := (x"EEEE", x"EEEE");
 
 ----------------------------------------------------------------------------------------------------------
 -- System for handling simulated cartridges and ROM loaders
 ----------------------------------------------------------------------------------------------------------
+
 
 type crtrom_buf_array is array(natural range<>) of std_logic_vector;
 constant ENDSTR : character := character'val(0);
@@ -129,7 +118,7 @@ constant C_CRTROMTYPE_OPTIONAL   : std_logic_vector(15 downto 0) := x"0004";
 --       else it is a 4k window in HyperRAM or in SDRAM
 -- In case we are loading to a QNICE device, then the control and status register is located at the 4k window 0xFFFF.
 -- @TODO: See @TODO for more details about the control and status register
-constant C_CRTROMS_MAN_NUM       : natural := 0;                                       -- amount of manually loadable ROMs and carts; maximum is 16
+constant C_CRTROMS_MAN_NUM       : natural := 0;                                       -- amount of manually loadable ROMs and carts, if more than 3: also adjust CRTROM_MAN_MAX in M2M/rom/shell_vars.asm, Needs to be in sync with config.vhd. Maximum is 16
 constant C_CRTROMS_MAN           : crtrom_buf_array := ( x"EEEE", x"EEEE",
                                                          x"EEEE");                     -- Always finish the array using x"EEEE"
 
@@ -143,7 +132,7 @@ constant C_CRTROMS_MAN           : crtrom_buf_array := ( x"EEEE", x"EEEE",
 --    C_CRTROMS_AUTO_NUM  is 0
 --    C_CRTROMS_AUTO      is (x"EEEE", x"EEEE", x"EEEE", x"EEEE", x"EEEE")
 -- How to pass the filenames of the ROMs to the framework:
---    C_CRTROMS_AUTO_NAMES is a concatenation of all filenames (see config.vhd's WHS_DATA for an example of how to concatenate)
+-- C_CRTROMS_AUTO_NAMES is a concatenation of all filenames (see config.vhd's WHS_DATA for an example of how to concatenate)
 --    The start addresses of the filename can be determined similarly to how it is done in config.vhd's HELP_x_START
 --    using a concatenated addition and VHDL's string length operator.
 --    IMPORTANT: a) The framework is not doing any consistency or error check when it comes to C_CRTROMS_AUTO_NAMES, so you
@@ -151,10 +140,62 @@ constant C_CRTROMS_MAN           : crtrom_buf_array := ( x"EEEE", x"EEEE",
 --               b) Don't forget to zero-terminate each of your substrings of C_CRTROMS_AUTO_NAMES by adding "& ENDSTR;"
 --               c) Don't forget to finish the C_CRTROMS_AUTO array with x"EEEE"
 
+constant C_DEV_GNG_CPU_ROM1           : std_logic_vector(15 downto 0) := x"0100";     -- rom1.bin   - main cpu
+constant C_DEV_GNG_CHARS_1            : std_logic_vector(15 downto 0) := x"0101";     -- gg1_1.bin  - characters
+constant C_DEV_GNG_CHARS_2            : std_logic_vector(15 downto 0) := x"0102";     -- gg1_2.bin  - characters
+constant C_DEV_GNG_AUDIO              : std_logic_vector(15 downto 0) := x"0103";     -- gg2.bin    - audio cpu
+constant C_DEV_GNG_TILE1              : std_logic_vector(15 downto 0) := x"0104";     -- gg98.bin   - tiles
+constant C_DEV_GNG_TILE2              : std_logic_vector(15 downto 0) := x"0105";     -- gg76.bin   - tiles
+constant C_DEV_GNG_TILE3              : std_logic_vector(15 downto 0) := x"0106";     -- gg1110.bin - tiles
+constant C_DEV_GNG_TILE4              : std_logic_vector(15 downto 0) := x"0107";     -- gg1110.bin - tiles
+constant C_DEV_GNG_SPR0               : std_logic_vector(15 downto 0) := x"0108";     -- sprites
+constant C_DEV_GNG_SPR1               : std_logic_vector(15 downto 0) := x"0109";     -- sprites
+
+
+constant ROM1_MAIN_CPU_ROM            : string  := "arcade/gng/rom1.bin"  & ENDSTR;
+constant ROM1_CHR1_ROM                : string  := "arcade/gng/gg1_1.bin" & ENDSTR;
+constant ROM1_CHR2_ROM                : string  := "arcade/gng/gg1_2.bin" & ENDSTR;
+constant ROM1_AUD_ROM                 : string  := "arcade/gng/gg2.bin"   & ENDSTR;
+constant ROM1_TILE_ROM                : string  := "arcade/gng/rom98.bin"  & ENDSTR;
+constant ROM2_TILE_ROM                : string  := "arcade/gng/rom76.bin"  & ENDSTR;
+constant ROM3_TILE_ROM                : string  := "arcade/gng/rom1110.bin"& ENDSTR;
+constant ROM4_TILE_ROM                : string  := "arcade/gng/rom1110.bin"& ENDSTR;
+constant ROM1_SPR_ROM                 : string  := "arcade/gng/spr1.bin"  & ENDSTR;
+constant ROM2_SPR_ROM                 : string  := "arcade/gng/spr2.bin"  & ENDSTR;
+
+
+constant CPU_ROM1_MAIN_START          : std_logic_vector(15 downto 0) := X"0000";
+constant ROM1_CHR1_ROM_START          : std_logic_vector(15 downto 0) := CPU_ROM1_MAIN_START + ROM1_MAIN_CPU_ROM'length;
+constant ROM1_CHR2_ROM_START          : std_logic_vector(15 downto 0) := ROM1_CHR1_ROM_START + ROM1_CHR1_ROM'length;
+constant ROM1_AUD_ROM_START           : std_logic_vector(15 downto 0) := ROM1_CHR2_ROM_START + ROM1_CHR2_ROM'length;
+constant ROM1_TILE_ROM_START          : std_logic_vector(15 downto 0) := ROM1_AUD_ROM_START  + ROM1_AUD_ROM'length;
+constant ROM2_TILE_ROM_START          : std_logic_vector(15 downto 0) := ROM1_TILE_ROM_START + ROM1_TILE_ROM'length;
+constant ROM3_TILE_ROM_START          : std_logic_vector(15 downto 0) := ROM2_TILE_ROM_START + ROM2_TILE_ROM'length;
+constant ROM4_TILE_ROM_START          : std_logic_vector(15 downto 0) := ROM3_TILE_ROM_START + ROM3_TILE_ROM'length;
+constant ROM1_SPR_ROM_START           : std_logic_vector(15 downto 0) := ROM4_TILE_ROM_START + ROM4_TILE_ROM'length;
+constant ROM2_SPR_ROM_START           : std_logic_vector(15 downto 0) := ROM1_SPR_ROM_START  + ROM1_SPR_ROM'length;
+
+
 -- M2M framework constants
-constant C_CRTROMS_AUTO_NUM      : natural := 0;                                       -- Amount of automatically loadable ROMs and carts, maximum is 16
-constant C_CRTROMS_AUTO_NAMES    : string  := "" & ENDSTR;
-constant C_CRTROMS_AUTO          : crtrom_buf_array := ( x"EEEE", x"EEEE", x"EEEE", x"EEEE",
+constant C_CRTROMS_AUTO_NUM      : natural := 10;                                       -- Amount of automatically loadable ROMs and carts, if more than 3: also adjust CRTROM_MAN_MAX in M2M/rom/shell_vars.asm, Needs to be in sync with config.vhd. Maximum is 16
+constant C_CRTROMS_AUTO_NAMES    : string  := ROM1_MAIN_CPU_ROM &
+                                              ROM1_CHR1_ROM & ROM1_CHR2_ROM &
+                                              ROM1_AUD_ROM  &
+                                              ROM1_TILE_ROM & ROM2_TILE_ROM & ROM3_TILE_ROM & ROM4_TILE_ROM &
+                                              ROM1_SPR_ROM & ROM2_SPR_ROM &
+                                              ENDSTR;
+                                              
+constant C_CRTROMS_AUTO          : crtrom_buf_array := ( 
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_CPU_ROM1, C_CRTROMTYPE_MANDATORY, CPU_ROM1_MAIN_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_CHARS_1 , C_CRTROMTYPE_MANDATORY, ROM1_CHR1_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_CHARS_2 , C_CRTROMTYPE_MANDATORY, ROM1_CHR2_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_AUDIO   , C_CRTROMTYPE_MANDATORY, ROM1_AUD_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_TILE1   , C_CRTROMTYPE_MANDATORY, ROM1_TILE_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_TILE2   , C_CRTROMTYPE_MANDATORY, ROM2_TILE_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_TILE3   , C_CRTROMTYPE_MANDATORY, ROM3_TILE_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_TILE4   , C_CRTROMTYPE_MANDATORY, ROM4_TILE_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_SPR0    , C_CRTROMTYPE_MANDATORY, ROM1_SPR_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_SPR1    , C_CRTROMTYPE_MANDATORY, ROM2_SPR_ROM_START,
                                                          x"EEEE");                     -- Always finish the array using x"EEEE"
 
 ----------------------------------------------------------------------------------------------------------
