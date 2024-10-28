@@ -105,7 +105,6 @@ port (
    -- Connect to CORE
    qnice_clk_o             : out   std_logic;
    qnice_rst_o             : out   std_logic;
-   reset_m2m_n_o           : out   std_logic;
    main_clk_i              : in    std_logic;
    main_rst_i              : in    std_logic;
    main_qnice_reset_o      : out   std_logic;
@@ -442,7 +441,6 @@ begin
       port map (
          sys_clk_i         => clk_i,
          sys_rstn_i        => reset_m2m_n,        -- reset everything
-         sys_rstn_i        => reset_m2m_n_o,
          core_rstn_i       => reset_core_n,       -- reset only the core (means the HyperRAM needs to be reset, too)
          qnice_clk_o       => qnice_clk,
          qnice_rst_o       => qnice_rst,

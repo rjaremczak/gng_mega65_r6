@@ -24,7 +24,6 @@ use xpm.vcomponents.all;
 entity clk is
    port (
       sys_clk_i       : in  std_logic;   -- expects 100 MHz
-      sys_rstn_i      : in  std_logic;   -- Asynchronous, asserted low
 
       clk_24_o        : out std_logic;   -- 24Mhz sys  clock
       clk_24_rst_o    : out std_logic;   -- reset, synchronized
@@ -149,10 +148,10 @@ begin
          DEST_SYNC_FF    => 10
       )
       port map (
-         src_arst  => not (main_locked and sys_rstn_i),   -- 1-bit input: Source reset signal.
+         src_arst  => not main_locked,     -- 1-bit input: Source reset signal.
          dest_clk  => main_clk_o,          -- 1-bit input: Destination clock.
-         dest_arst => main_rst_o       -- 1-bit output: src_rst synchronized to the destination clock domain.
-                                         -- This output is registered.
+         dest_arst => main_rst_o           -- 1-bit output: src_rst synchronized to the destination clock domain.
+                                           -- This output is registered.
       );
       
    i_xpm_cdc_async_rst_clk24 : xpm_cdc_async_rst
@@ -161,10 +160,10 @@ begin
          DEST_SYNC_FF    => 10
       )
       port map (
-         src_arst  => not (main_locked and sys_rstn_i),   -- 1-bit input: Source reset signal.
-         dest_clk  => clk_24_o,         -- 1-bit input: Destination clock.
-         dest_arst => clk_24_rst_o      -- 1-bit output: src_rst synchronized to the destination clock domain.
-                                        -- This output is registered.
+         src_arst  => not main_locked,   -- 1-bit input: Source reset signal.
+         dest_clk  => clk_24_o,          -- 1-bit input: Destination clock.
+         dest_arst => clk_24_rst_o       -- 1-bit output: src_rst synchronized to the destination clock domain.
+                                         -- This output is registered.
       );
       
    i_xpm_cdc_async_rst_clk48 : xpm_cdc_async_rst
@@ -173,7 +172,7 @@ begin
          DEST_SYNC_FF    => 10
       )
       port map (
-         src_arst  => not (main_locked and sys_rstn_i),   -- 1-bit input: Source reset signal.
+         src_arst  => not main_locked,   -- 1-bit input: Source reset signal.
          dest_clk  => clk48_clk_o,       -- 1-bit input: Destination clock.
          dest_arst => clk48_rst_o        -- 1-bit output: src_rst synchronized to the destination clock domain.
                                          -- This output is registered.

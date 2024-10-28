@@ -102,7 +102,6 @@ port (
    --------------------------------------------------------------------------------------------------------
 
    clk_i                   : in  std_logic;              -- 100 MHz clock
-   reset_m2m_n             : in  std_logic;              -- Debounced system reset in system clock domain
 
    -- Share clock and reset with the framework
    main_clk_o              : out std_logic;              -- Core main clock - 12 Mhz
@@ -374,7 +373,6 @@ begin
    clk_gen : entity work.clk
       port map (
          sys_clk_i         => clk_i,             -- expects 100 MHz
-         sys_rstn_i        => reset_m2m_n,     -- Asynchronous, asserted low
          
          main_clk_o        => clk12_clk,        -- 12 Mhz main clock
          main_rst_o        => clk12_rst,        -- reset, synchronized
