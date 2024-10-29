@@ -1,5 +1,5 @@
-GnG for MEGA65
-==============
+GnG core for the MEGA65 R6
+==========================
 
 MEGA65 R6 port of Ghosts'n Goblins arcade game based on
 
