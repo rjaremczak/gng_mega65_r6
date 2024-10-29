@@ -1,6 +1,8 @@
 GnG core for the MEGA65 R6
 ==========================
 
+![Screenshot](gng_scr.png)
+
 MEGA65 R6 port of Ghosts'n Goblins arcade game based on
 
 * MEGA65 R3 port https://github.com/sho3string/GnGMEGA65.git done by sho3string
