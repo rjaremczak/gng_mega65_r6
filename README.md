@@ -10,6 +10,6 @@ MEGA65 R6 port of Ghosts'n Goblins arcade game based on
 This is just a mere attempt to understand HDL domain and port one of my favourite arcade game to the MEGA65 R6. 
 It might not work entirely as expected :-) Fixes to possible bugs and/or improvements will be added as soon as possible.
 
-Find pre-generated files gng_r6.bit and gng_r6.cor to use directly, for preparing rom-s (content of /arcade/gng on a SD card) please refer to the source: git@github.com:sho3string/GnGMEGA65.git.
+Find pre-generated files gng_r6.bit and gng_r6.cor to use directly, for preparing rom-s (content of /arcade/gng on a SD card) please refer to the origin: https://github.com/sho3string/GnGMEGA65.git.
 
 Enjoy!
