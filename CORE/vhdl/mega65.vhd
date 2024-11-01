@@ -254,7 +254,7 @@ signal main_video_vblank   : std_logic;
 ---------------------------------------------------------------------------------------------
 
 constant C_UP_FIRE            : natural := 2;
-constant C_FLIP_JOYS          : natural := 3;
+constant C_MENU_FLIPJOYS      : natural := 3;
 constant C_MENU_CRT_EMULATION : natural := 7;
 constant C_MENU_HDMI_16_9_50  : natural := 11;
 constant C_MENU_HDMI_16_9_60  : natural := 12;
@@ -570,7 +570,7 @@ begin
    qnice_ascal_triplebuf_o    <= '0';
 
    -- Flip joystick ports (i.e. the joystick in port 2 is used as joystick 1 and vice versa)
-   qnice_flip_joyports_o      <= '0';
+   qnice_flip_joyports_o      <= qnice_osm_control_i(C_MENU_FLIPJOYS);
 
    ---------------------------------------------------------------------------------------------
    -- Core specific device handling (QNICE clock domain)
