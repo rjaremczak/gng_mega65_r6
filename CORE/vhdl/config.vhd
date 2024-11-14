@@ -76,7 +76,7 @@ type WHS_RECORD_ARRAY_TYPE is array (0 to WHS_RECORDS - 1) of WHS_RECORD_TYPE;
 
 constant SCR_WELCOME : string :=
 
-   "Ghost 'n' Goblins V0.5.0 (beta)\n" &
+   "Ghost 'n' Goblins V0.5.1 (beta)\n" &
    "-------------------------------\n" &
    "\n" &
    "MiSTer port by Muse in 2024\n\n" &

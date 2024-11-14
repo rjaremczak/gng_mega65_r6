@@ -324,7 +324,8 @@ begin
    cart_ctrl_oe_o       <= '0';
    cart_addr_oe_o       <= '0';
    cart_data_oe_o       <= '0';
-   cart_en_o            <= '0'; -- Disable port
+
+   cart_en_o            <= '1'; -- Enable as required on R5/R6 for joy 2 port to work
 
    cart_reset_oe_o      <= '0';
    cart_game_oe_o       <= '0';
