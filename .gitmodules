@@ -1,6 +1,6 @@
 [submodule "M2M/QNICE"]
 	path = M2M/QNICE
-	url = git@github.com:rjaremczak/m2m_stub.git
+	url = git@github.com:rjaremczak/MiSTer2MEGA65.git
 	branch = master
 [submodule "CORE/Arcade-GnG_MiSTer"]
 	path = CORE/Arcade-GnG_MiSTer
